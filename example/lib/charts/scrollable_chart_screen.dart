@@ -147,35 +147,50 @@ class _ScrollableChartScreenState extends State<ScrollableChartScreen> {
       ),
       body: Column(
         children: [
-          Row(
+          Stack(
             children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: _isScrollable ? ScrollPhysics() : NeverScrollableScrollPhysics(),
-                  controller: _controller,
-                  scrollDirection: Axis.horizontal,
-                  child: Chart(
-                    width: MediaQuery.of(context).size.width - 24.0,
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    state: _chartState,
-                  ),
+              SingleChildScrollView(
+                physics: _isScrollable ? ScrollPhysics() : NeverScrollableScrollPhysics(),
+                controller: _controller,
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    Chart(
+                      width: MediaQuery.of(context).size.width - 24.0,
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      state: _chartState,
+                    ),
+                    SizedBox(width: 20.0),
+                  ],
                 ),
               ),
-              Container(
-                width: 20.0,
-                height: MediaQuery.of(context).size.height * 0.4,
-                child: FixedDecorationRenderer(
-                  [
-                    HorizontalAxisDecoration(
-                      endWithChart: false,
-                      lineWidth: 2.0,
-                      axisStep: 2,
-                      showValues: true,
-                      legendFontStyle: Theme.of(context).textTheme.bodyText1,
-                      lineColor: Theme.of(context).colorScheme.primaryVariant.withOpacity(0.2),
-                    )
-                  ],
-                  _chartState,
+              Positioned(
+                right: 0.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(begin: Alignment.centerRight, end: Alignment.centerLeft, colors: [
+                      Colors.white,
+                      Colors.white.withOpacity(0.0),
+                    ], stops: [
+                      0.5,
+                      1.0
+                    ]),
+                  ),
+                  width: 20.0,
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  child: FixedDecorationRenderer(
+                    [
+                      HorizontalAxisDecoration(
+                        endWithChart: false,
+                        lineWidth: 2.0,
+                        axisStep: 2,
+                        showValues: true,
+                        legendFontStyle: Theme.of(context).textTheme.bodyText1,
+                        lineColor: Theme.of(context).colorScheme.primaryVariant.withOpacity(0.2),
+                      )
+                    ],
+                    _chartState,
+                  ),
                 ),
               )
             ],
