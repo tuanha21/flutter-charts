@@ -34,6 +34,7 @@ part 'chart/model/theme/item_theme/line_item_options.dart';
 
 /// Render
 part 'chart/render/chart_renderer.dart';
+part 'chart/render/fixed_decoration_renderer.dart';
 // Geometry painters
 part 'chart/render/data_renderer/chart_data_renderer.dart';
 part 'chart/render/data_renderer/chart_linear_data_renderer.dart';
