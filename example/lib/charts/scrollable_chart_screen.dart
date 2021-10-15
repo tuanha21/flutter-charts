@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:charts_painter/chart.dart';
+import 'package:example/decorations/fixed_horizontal_axis_decoration.dart';
 import 'package:example/widgets/chart_options.dart';
 import 'package:example/widgets/toggle_item.dart';
 import 'package:flutter/cupertino.dart';
@@ -132,10 +133,10 @@ class _ScrollableChartScreenState extends State<ScrollableChartScreen> {
           selectedColor: Theme.of(context).colorScheme.secondary,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor.withOpacity(_isScrollable ? 0.5 : 0.8),
         ),
-        BorderDecoration(
-          endWithChart: true,
-          color: Theme.of(context).colorScheme.primaryVariant,
-        ),
+        // BorderDecoration(
+        //   endWithChart: true,
+        //   color: Theme.of(context).colorScheme.primaryVariant,
+        // ),
       ],
     );
 
@@ -171,16 +172,16 @@ class _ScrollableChartScreenState extends State<ScrollableChartScreen> {
                     1.0
                   ]),
                 ),
-                width: 26.0,
+                width: 50.0,
                 height: MediaQuery.of(context).size.height * 0.4,
                 child: FixedDecorationRenderer(
                   [
-                    HorizontalAxisDecoration(
-                      endWithChart: false,
+                    FixedHorizontalAxisDecoration(
                       lineWidth: 2.0,
                       axisStep: 2,
                       showValues: true,
                       legendFontStyle: Theme.of(context).textTheme.bodyText1,
+                      valuesAlign: TextAlign.center,
                       lineColor: Theme.of(context).colorScheme.primaryVariant.withOpacity(0.2),
                     )
                   ],
