@@ -99,7 +99,9 @@ class BarGeometryPainter<T> extends GeometryPainter<T> {
               _stickMaxValue * _verticalMultiplier +
               _minValue,
         ),
-        paint..strokeWidth = _stickWidth,
+        paint
+          ..strokeWidth = _stickWidth
+          ..strokeCap = StrokeCap.round,
       );
     }
 
