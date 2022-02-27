@@ -4,7 +4,7 @@ part of charts_painter;
 class ChartItem<T> {
   /// Protected constructor for animations
   @protected
-  ChartItem(this.value, this.min, this.max);
+  ChartItem(this.value, this.min, this.max, {this.high, this.low});
 
   /// Minimum chart item value
   final double? min;
@@ -12,11 +12,20 @@ class ChartItem<T> {
   /// Maximum item value
   final double? max;
 
+  /// High value for candle chart
+  final double? high;
+
+  /// Low value for candle chart
+  final double? low;
+
   /// Items can have value attached to them `T`
   final T? value;
 
   /// Check if current item is empty
   bool get isEmpty => (max ?? 0) == 0 && (min ?? 0) == 0;
+
+  /// Check if current item in type candle
+  bool get isCandleItem => !((high ?? 0) == 0 && (low ?? 0) == 0);
 
   /// Animate to [endValue] with factor `t`
   ChartItem<T?> animateTo(ChartItem<T?> endValue, double t) {
@@ -24,6 +33,8 @@ class ChartItem<T> {
       endValue.value,
       lerpDouble(min, endValue.min, t),
       lerpDouble(max, endValue.max, t),
+      high: lerpDouble(high, endValue.high, t),
+      low: lerpDouble(low, endValue.low, t),
     );
   }
 

@@ -8,10 +8,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CandleItem {
-  CandleItem(this.min, this.max);
+  CandleItem(this.min, this.max, this.high, this.low);
 
   final double max;
   final double min;
+  final double high;
+  final double low;
 }
 
 class CandleChartScreen extends StatefulWidget {
@@ -45,7 +47,12 @@ class _CandleChartScreenState extends State<CandleChartScreen> {
     targetMin = targetMax - (3 + (_rand.nextDouble() * (_max / 2)));
     _values.addAll(List.generate(minItems, (index) {
       double _value = 2 + _rand.nextDouble() * _difference;
-      return CandleItem(_value, _value + 2 + _rand.nextDouble() * 4);
+      return CandleItem(
+        _value,
+        _value + 2 + _rand.nextDouble() * 4,
+        _value + 6 + _rand.nextDouble() * 4,
+        _value - _rand.nextDouble() * 4,
+      );
     }));
   }
 
@@ -55,7 +62,12 @@ class _CandleChartScreenState extends State<CandleChartScreen> {
         return _values[index];
       }
       double _value = 2 + Random().nextDouble() * targetMax;
-      return CandleItem(_value, _value + 2 + Random().nextDouble() * 4);
+      return CandleItem(
+        _value,
+        _value + 2 + Random().nextDouble() * 4,
+        _value + 6 + Random().nextDouble() * 4,
+        _value - Random().nextDouble() * 4,
+      );
     });
   }
 
@@ -75,29 +87,45 @@ class _CandleChartScreenState extends State<CandleChartScreen> {
               child: CandleChart<CandleItem>(
                 data: _values,
                 height: MediaQuery.of(context).size.height * 0.4,
-                dataToValue: (CandleItem value) =>
-                    CandleValue(value.min, value.max),
+                dataToValue: (CandleItem value) => CandleValue(
+                  value.min,
+                  value.max,
+                  high: value.high,
+                  low: value.low,
+                ),
                 chartItemOptions: BarItemOptions(
                   minBarWidth: 4.0,
                   padding: EdgeInsets.symmetric(horizontal: 2.0),
-                  color: Theme.of(context).colorScheme.primary.withOpacity(1.0),
+                  // color: Theme.of(context).colorScheme.primary.withOpacity(1.0),
+                  color: Colors.green,
+                  colorForValue: (defaultColor, value, [min]) {
+                    if (value < 15) {
+                      return Colors.red;
+                    } else {
+                      return defaultColor;
+                    }
+                  },
                   radius: BorderRadius.all(
                     Radius.circular(100.0),
                   ),
                 ),
-                chartBehaviour: ChartBehaviour(onItemClicked: (item) {
+                chartBehaviour: ChartBehaviour(
+                    // isScrollable: true,
+                    onItemClicked: (item) {
                   setState(() {
                     _selected = item;
                   });
                 }),
                 backgroundDecorations: [
                   GridDecoration(
+                    showHorizontalGrid: false,
                     showHorizontalValues: _showValues,
                     showVerticalGrid: true,
                     showVerticalValues: _showValues,
                     verticalValuesPadding: EdgeInsets.only(left: 8.0),
                     horizontalAxisStep: 5,
                     verticalTextAlign: TextAlign.start,
+                    dashArray: [5, 5],
                     gridColor: Theme.of(context)
                         .colorScheme
                         .primaryVariant
@@ -109,15 +137,15 @@ class _CandleChartScreenState extends State<CandleChartScreen> {
                   ),
                 ],
                 foregroundDecorations: [
-                  ValueDecoration(
-                    textStyle: TextStyle(color: Colors.red),
-                    alignment: Alignment.topCenter,
-                  ),
-                  ValueDecoration(
-                    textStyle: TextStyle(color: Colors.red),
-                    alignment: Alignment.bottomCenter,
-                    valueGenerator: (item) => item.min ?? 0,
-                  ),
+                  // ValueDecoration(
+                  //   textStyle: TextStyle(color: Colors.red),
+                  //   alignment: Alignment.topCenter,
+                  // ),
+                  // ValueDecoration(
+                  //   textStyle: TextStyle(color: Colors.red),
+                  //   alignment: Alignment.bottomCenter,
+                  //   valueGenerator: (item) => item.min ?? 0,
+                  // ),
                   SelectedItemDecoration(
                     _selected,
                     backgroundColor: Theme.of(context)

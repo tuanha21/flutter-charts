@@ -26,7 +26,20 @@ class ChartData<T> {
                     (List<ChartItem<T?>> list, element) =>
                         list..addAll(element)).toList(),
                 axisMax) +
-            (valueAxisMaxOver ?? 0.0);
+            (valueAxisMaxOver ?? 0.0),
+        highValue = _getHighValue(
+                dataStrategy.formatDataStrategy(_items).fold(
+                    <ChartItem<T?>>[],
+                    (List<ChartItem<T?>> list, element) =>
+                        list..addAll(element)).toList(),
+                axisMax) +
+            (valueAxisMaxOver ?? 0.0),
+        lowValue = _getLowValue<T>(
+            dataStrategy.formatDataStrategy(_items).fold(
+                <ChartItem<T?>>[],
+                (List<ChartItem<T?>> list, element) =>
+                    list..addAll(element)).toList(),
+            axisMin);
 
   /// Make chart data from list of [ChartItem]'s
   factory ChartData.fromList(
@@ -70,6 +83,8 @@ class ChartData<T> {
     this.valueAxisMaxOver,
     required this.minValue,
     required this.maxValue,
+    this.highValue,
+    this.lowValue,
   });
 
   /// Chart items, items in the list cannot be null, but ChartItem can be defined
@@ -90,6 +105,15 @@ class ChartData<T> {
   /// Max value to show on the chart, in case data has point higher then
   /// specified [maxValue] then [maxValue] is ignored
   late final double maxValue;
+
+  /// Min value that chart should show.
+  /// In case chart shouldn't start from 0 use this to specify new min starting point
+  /// If data has value that goes below [minValue] then [minValue] is ignored
+  late final double? highValue;
+
+  /// Max value to show on the chart, in case data has point higher then
+  /// specified [maxValue] then [maxValue] is ignored
+  late final double? lowValue;
 
   /// Max value that chart should show, in case that [axisMax] is bellow
   /// the value of value passed with data in the chart this will be ignored.
@@ -128,7 +152,18 @@ class ChartData<T> {
   /// Max value is max data item from [items] or [ChartOptions.axisMax]
   static double _getMaxValue<T>(
       List<ChartItem<T>> items, double? valueAxisMax) {
-    return max(valueAxisMax ?? 0.0, items.map((e) => e.max ?? 0.0).reduce(max));
+    return max(
+      valueAxisMax ?? 0.0,
+      items.map((e) => e.max ?? 0.0).reduce(max),
+    );
+  }
+
+  static double _getHighValue<T>(
+      List<ChartItem<T>> items, double? valueAxisMax) {
+    return max(
+      valueAxisMax ?? 0.0,
+      items.map((e) => e.high ?? 0.0).reduce(max),
+    );
   }
 
   /// Get min value of the chart
@@ -137,8 +172,23 @@ class ChartData<T> {
       List<ChartItem<T?>> items, double? valueAxisMin) {
     final _minItems = items
         .where((e) =>
-            (e.min != null && e.min != 0.0) || (e.min == null && e.max != 0.0))
-        .map((e) => e.min ?? e.max ?? double.infinity);
+            (e.min != null && e.min != 0.0) ||
+            (e.min == null && e.max != 0.0) ||
+            (e.low != null && e.low != 0.0))
+        .map((e) => e.low ?? e.min ?? e.max ?? double.infinity);
+    if (_minItems.isEmpty) {
+      return valueAxisMin ?? 0.0;
+    }
+
+    return min(valueAxisMin ?? 0.0, _minItems.reduce(min));
+  }
+
+  static double _getLowValue<T>(
+      List<ChartItem<T?>> items, double? valueAxisMin) {
+    final _minItems = items
+        .where((e) =>
+            (e.low != null && e.low != 0.0) || (e.min == null && e.max != 0.0))
+        .map((e) => e.low ?? e.min ?? e.max ?? double.infinity);
     if (_minItems.isEmpty) {
       return valueAxisMin ?? 0.0;
     }
@@ -161,6 +211,8 @@ class ChartData<T> {
       /// Those are usually calculated, but we need to have a control over them in the animation
       maxValue: lerpDouble(a.maxValue, b.maxValue, t) ?? b.maxValue,
       minValue: lerpDouble(a.minValue, b.minValue, t) ?? b.minValue,
+      highValue: lerpDouble(a.highValue, b.highValue, t) ?? b.highValue,
+      lowValue: lerpDouble(a.lowValue, b.lowValue, t) ?? b.lowValue,
     );
   }
 }

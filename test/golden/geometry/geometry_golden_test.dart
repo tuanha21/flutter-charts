@@ -50,8 +50,12 @@ void main() {
             state: ChartState(
               ChartData.fromList(
                 [5, 6, 8, 4, 3, 5, 2, 6, 7]
-                    .mapIndexed((i, e) => CandleValue<void>(e.toDouble(),
-                        e.toDouble() + (Random(i).nextDouble() * 10) - 5))
+                    .mapIndexed(
+                      (i, e) => CandleValue<void>(
+                        e.toDouble(),
+                        e.toDouble() + (Random(i).nextDouble() * 10) - 5,
+                      ),
+                    )
                     .toList(),
                 valueAxisMaxOver: 2,
               ),
